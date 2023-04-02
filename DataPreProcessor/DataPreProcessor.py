@@ -52,14 +52,17 @@ class DataPreProcessor:
         missing_values = [i / self.data.shape[0] for i in missing]
         columns = list(self.data.columns)
 
-        # fig = plt.figure(fig-size=(16 * 0.75, 9), dpi=80)
-        plt.barh(columns, missing_values, height=0.7)
-        plt.title(label='Missing Values', color='xkcd:pale red', fontsize=18, pad=13, fontweight='bold')
-        plt.xlabel('% of NaN', color='xkcd:pale red', fontsize=14, fontweight='bold')
-        plt.ylabel('Variable', color='xkcd:pale red', fontsize=14, fontweight='bold')
-        plt.xticks(np.arange(0, 1.1, step=0.1), fontsize=10, color='xkcd:cadet blue')
-        plt.yticks(fontsize=10, color='xkcd:cadet blue')
-        plt.grid(color='black', linewidth=1, axis='both', alpha=0.5, which='major')
+        fig, ax = plt.subplots(figsize=(16, 9), dpi=80)
+
+        ax.barh(columns, missing_values, height=0.7)
+        ax.set_title('Missing Values', color='xkcd:pale red', fontsize=18, pad=13, fontweight='bold')
+        ax.set_xlabel('% of NaN', color='xkcd:pale red', fontsize=14, fontweight='bold')
+        ax.set_ylabel('Variable', color='xkcd:pale red', fontsize=14, fontweight='bold')
+        ax.set_xticks(np.arange(0, 1.1, step=0.1))
+        ax.set_xticklabels([f'{x:.0%}' for x in np.arange(0, 1.1, step=0.1)], fontsize=10, color='xkcd:cadet blue')
+        ax.tick_params(axis='y', labelsize=10, color='xkcd:cadet blue')
+        ax.grid(color='black', linewidth=1, alpha=0.5, which='major')
+
         plt.show()
 
     def fill_na(self) -> None:
@@ -68,9 +71,9 @@ class DataPreProcessor:
         """
         for col in self.data.columns:
             if self.data[col].dtype == 'object':
-                self.data[col].fill_na(self.data[col].mode()[0], inplace=True)
+                self.data[col].fillna(self.data[col].mode()[0], inplace=True)
             else:
-                self.data[col].fill_na(self.data[col].mean(), inplace=True)
+                self.data[col].fillna(self.data[col].mean(), inplace=True)
 
     def run_preprocessing(self, missing_value, training: float = 0.7):
         """
